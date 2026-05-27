@@ -159,78 +159,115 @@ internal class Program
         // TODO:
         // Lägg till minst 10 produkter i products-dictionaryn.
         // Välj egna koder, namn, priser och lagersaldon.
-
-
+        
+        products["KAFFE"] = new Product("KAFFE", "kaffe", 15.00m, 50);
+        
     }
 
     static void PrintProducts()
     {
         Console.WriteLine("=== Produkter ===");
 
-        // TODO:
-        // Loopa igenom dictionaryn products.
-        // Skriv ut varje produkt.
-        // Räkna även ut totalt lagervärde.
-        // Lagervärde för en produkt:
-        // product.Price * product.Stock
-
+        foreach (var product in products)
+        {
+            var p = product.Value;
+            Console.WriteLine($"Name:{p.Name} Total Value:{p.Price*p.Stock}");
+        }
 
         // Fråga:
         // Varför passar Dictionary bra för ett produktregister?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Svar: Kan lagra och nå produkter snabbt och enkelt igenom att använda deras nyckel som kan vara produktkod");
+        Console.WriteLine("Om man inte använde det så skulle man behövs söka igenom varje gång vilket skulle vara mer krävande");
     }
 
     static void FindProduct()
     {
         Console.Write("Ange produktkod: ");
         
-
-        // TODO:
-        // Hämta produktens code
-        // Gör koden till stora bokstäver med .ToUpper()
-        // Slå upp produkten med TryGetValue
-        // Om produkten finns, skriv ut den.
-        // Om produkten saknas, skriv ett felmeddelande.
-
-        Console.WriteLine("TODO: Implementera FindProduct.");
-
+        string line = Console.ReadLine() ?? string.Empty;
+        if(products.TryGetValue(line.ToUpper(), out Product p))
+        {
+            Console.WriteLine(p.ToString());
+        }
+        else
+            Console.WriteLine("ERROR: NO PRODUCT WITH THAT NAME");
+        
         // Fråga:
         // Varför är TryGetValue bättre än att skriva products[code] direkt?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("TryGetValue har inbyggd funkionalitet för hantera om värdet inte hittas");
     }
 
     static void AddProduct()
     {
-        Console.WriteLine("TODO: Implementera AddProduct.");
-      
-        // TODO:
-        // Läs in produktkod.
-        // Gör produktkoden till stora bokstäver med .ToUpper().
-        // Kontrollera om koden redan finns i products — skriv felmeddelande om den gör det.
-        // Läs in namn.
-        // Läs in pris (använd InputHelpers.ReadDecimal).
-        // Läs in lagersaldo (använd InputHelpers.ReadInt).
-        // Skapa ett Product-objekt.
-        // Lägg till produkten i products-dictionaryn.
+        
         // Lägg till ett loggmeddelande i logMessages.
+        string code = "";
+        do
+        {
+            if (!code.IsWhiteSpace()) Console.WriteLine("Key already Exists");
+            Console.WriteLine("Ange produktkod"); 
+            code = Console.ReadLine() ?? string.Empty;
+        }
+        while(products.ContainsKey(code));
 
+        string name = "";
+        do
+        {
+            Console.WriteLine("Ange Namn"); 
+            code = Console.ReadLine() ?? string.Empty;
+        }
+        while(code.IsWhiteSpace());
+        
+        decimal price;
+        string price_line;
+        do
+        {
+            Console.WriteLine("Ange Pris"); 
+            price_line = Console.ReadLine() ?? string.Empty;
+        }
+        while(!decimal.TryParse(price_line, out price));
+        
+        int stock;
+        do
+        {
+            Console.WriteLine("Ange Saldo"); 
+            price_line = Console.ReadLine() ?? string.Empty;
+        }
+        while(!int.TryParse(price_line, out stock));
+        // TODO Ändra hämta via konsol till egen funktion
+        
+        Product newProduct = new Product(code, name, price, stock);
+        products.Add(code,newProduct);
+        logMessages.Add($"Added {newProduct.ToString()}"); 
         // Fråga:
         // Vad är nyckeln och vad är värdet i products?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Nyckeln är produktkoden i detta fallet (Kan dock tekniskt sett sätta vilken string som möjligt)");
+        Console.WriteLine("Värdet är själva Product klassen man kan hämta ut via nyckeln");
     }
 
     static void ChangeStock()
     {
         Console.WriteLine("TODO: Implementera ChangeStock.");
-        // TODO:
-        // Läs in produktkod.
-        // Slå upp produkten med TryGetValue.
-        // Läs in nytt lagersaldo från användaren.
-        // Validera
-        // Ändra produktens Stock. Validera även i product
-        // 
-        // Logga ändringen.
+        string code = "";
+        do
+        {
+            if (!code.IsWhiteSpace()) Console.WriteLine("Key already Exists");
+            Console.WriteLine("Ange produktkod"); 
+            code = Console.ReadLine() ?? string.Empty;
+        }
+        while(!products.ContainsKey(code));
 
+        string line = "";
+        int stock;
+        do
+        {
+            Console.WriteLine("Ange Saldo"); 
+            line = Console.ReadLine() ?? string.Empty;
+        }
+        while(!int.TryParse(line, out stock));
+
+        products[code].Stock = stock;
+        logMessages.Add($"Changed {code} stock to {stock}"); 
     }
 
     static decimal GetPriceBad(string code)
