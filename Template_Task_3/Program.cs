@@ -156,12 +156,20 @@ internal class Program
         // Exempel på hur du lägger till en produkt i dictionaryn:
         // products["KAFFE"] = new Product("KAFFE", "Kaffe", 15.00m, 50);
         //
-        // TODO:
         // Lägg till minst 10 produkter i products-dictionaryn.
         // Välj egna koder, namn, priser och lagersaldon.
         
         products["KAFFE"] = new Product("KAFFE", "kaffe", 15.00m, 50);
+        products["TE"] = new Product("TE", "te", 10.4m, 80);
         
+        products["COLA"] = new Product("COLA", "cola", 12.00m, 50);
+        products["SAFT"] = new Product("SAFT", "saft", 5.00m, 50);
+        products["BANAN"] = new Product("BANAN", "banan", 1.00m, 50);
+        products["BRÖD"] = new Product("BRÖD", "bröd", 4.15m, 50);
+        products["GODIS"] = new Product("GODIS", "godis", 1.00m, 5000);
+        products["MJÖLK"] = new Product("MJÖLK", "mjölk", 5.00m, 50);
+        products["OBOY"] = new Product("OBOY", "oboy", 15.00m, 50);
+        products["POKEMON"] = new Product("POKEMON", "pokemon kort", 15.00m, 0);
     }
 
     static void PrintProducts()
@@ -234,7 +242,6 @@ internal class Program
             price_line = Console.ReadLine() ?? string.Empty;
         }
         while(!int.TryParse(price_line, out stock));
-        // TODO Ändra hämta via konsol till egen funktion
         
         Product newProduct = new Product(code, name, price, stock);
         products.Add(code,newProduct);
@@ -247,7 +254,6 @@ internal class Program
 
     static void ChangeStock()
     {
-        Console.WriteLine("TODO: Implementera ChangeStock.");
         string code = "";
         do
         {
@@ -296,20 +302,19 @@ internal class Program
 
     static decimal GetPriceBetter(string code)
     {
-        // TODO:
-        // Skriv om GetPriceBad med en lokal Dictionary istället för if/else.
-        // Samma fyra produkter och priser som i GetPriceBad ska finnas.
-        // Använd TryGetValue för att slå upp priset.
-        // Returnera priset om koden finns, annars -1.
-        //
-        // Jämför sedan de två metoderna — vad händer om du behöver lägga till
-        // en femte produkt? Vilken metod är enklare att utöka?
+        var prices = new Dictionary<string, decimal>();
+        prices.Add("KAF",15);
+        prices.Add("TE",12);
+        prices.Add("BUL",18);
+        prices.Add("MCK",35);
 
+        decimal output = -1;
+        prices.TryGetValue(code, out output);
+        
         // Fråga:
         // Varför är Dictionary-lösningen bättre än många if/else-satser?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
-
-        return -1;
+        Console.WriteLine("Kan dynamiskt lägga in mer alternativ och spara det i t.ex. en databas");
+        return output;
     }
 
     #endregion
@@ -322,41 +327,50 @@ internal class Program
 
     static void AddCustomerToQueue()
     {
-        Console.WriteLine("TODO: Implementera AddCustomerToQueue.");
-        
-        // TODO:
         // Läs in kundens namn (använd InputHelpers.ReadString).
         // Skapa ett Customer-objekt med namnet.
         // Lägg kunden i customerQueue med Enqueue.
         // Skriv ut att kunden lagts till och vilken plats i kön de har.
         // Lägg till ett loggmeddelande i logMessages.
 
+        string name = InputHelpers.ReadString("Lägg till namn: ");
+        Customer customer = new Customer(name);
+        customerQueue.Enqueue(customer);
+        Console.WriteLine($"Kunden har lagt till på plats {customerQueue.Count}");
+        
+        logMessages.Add($"Added customer {name}");
+        
         // Fråga:
         // Vad betyder FIFO?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("First In First Out. När man tar ut något får man den som varit där längst");
     }
 
     static void ServeNextCustomer()
     {
-        Console.WriteLine("TODO: Implementera ServeNextCustomer.");
         
-        // TODO:
         // Kontrollera om customerQueue är tom — skriv meddelande om den är det.
         // Om den inte är tom:
         // Använd Dequeue för att ta bort och hämta den första kunden.
         // Skriv ut vilken kund som blev betjänad.
         // Lägg till ett loggmeddelande i logMessages.
-
+        if (customerQueue.TryDequeue( out Customer customer))
+        {
+            Console.WriteLine($"Servat {customer.Name}");
+            logMessages.Add($"Dequeued {customer}");
+        }
+        else
+        {
+            Console.WriteLine("customerQueue är tom. lägg till customer");
+        }
         // Fråga:
         // Varför passar Queue bättre än Stack för en kundkö?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("I en kö vill du ta först den som har köat längs vilket queue är gjort för medans stack är omvänt");
     }
 
     static void PrintCustomerQueue()
     {
         Console.WriteLine("=== Kundkö ===");
 
-        // TODO:
         // Om customerQueue är tom, skriv att kön är tom.
         // Annars: loopa igenom customerQueue med en räknare.
         // Skriv ut platsnummer, namn och tidsstämpel för varje kund.
@@ -368,7 +382,17 @@ internal class Program
         //
         // Tips: foreach fungerar på Queue utan att ta bort elementen.
 
-        Console.WriteLine("TODO: Implementera PrintCustomerQueue.");
+        if (customerQueue.Count == 0)
+        {
+            Console.WriteLine("Kön är tom");
+            return;
+        }
+
+        var queueArray = customerQueue.ToArray();
+        for (int i = 0; i < customerQueue.Count; i++)
+        {
+            Console.WriteLine($"{i} {queueArray[i]}");
+        }
     }
 
     #endregion
@@ -381,7 +405,6 @@ internal class Program
 
     static void SellProduct()
     {
-        // TODO:
         // Kontrollera om customerQueue är tom — skriv meddelande om den är det.
         // Använd Peek för att se vilken kund som står först (utan att ta bort dem).
         // Läs in produktkod.
@@ -395,19 +418,39 @@ internal class Program
         // Extra:
         // Bestäm om kunden ska tas bort från kön efter köp eller inte.
         // Motivera ditt val i kommentar.
+        
+        if (customerQueue.Count == 0)
+        {
+            Console.WriteLine("Kön är tom");
+            return;
+        }
+        Customer customer = customerQueue.Peek();
+        
+        Product product = null;
+        do
+        {
+            string input = InputHelpers.ReadString("Vad vill du köpa för något (skriv PRODUCTCODE): ");
+            products.TryGetValue(input,out product);
+        } while (product == null);
 
-        Console.WriteLine("TODO: Implementera SellProduct.");
-
+        if (product.Stock == 0)
+        {
+            product.Stock--;
+        }
+        Sale sale = new Sale(product.Code, product.Name, product.Price, customer.Name);
+        
+        saleHistory.Push(sale);
+        string log = $"Sale {sale} processed";
+        Console.WriteLine(log);
+        logMessages.Add(log);
         // Fråga:
         // Varför sparar vi försäljningar i en Stack?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("För att det är lättare att fysiskt ta tillbaka de senaste än längre tillbaka");
     }
 
     static void UndoLastSale()
     {
-        Console.WriteLine("TODO: Implementera UndoLastSale.");
 
-        // TODO:
         // Kontrollera om saleHistory är tom — skriv meddelande om den är det.
         // Om den inte är tom:
         // Använd Pop för att hämta och ta bort senaste försäljningen.
@@ -415,19 +458,37 @@ internal class Program
         // Öka produktens Stock med 1.
         // Logga vad som ångrades i logMessages.
 
+        if (saleHistory.Count == 0)
+        {
+            Console.WriteLine("Ingen försäljning att ta bort");
+            return;
+        } 
+        
+        Sale sale = saleHistory.Pop();
+        Product product = products[sale.ProductCode];
+
+        product.Stock++;
+        string log = $"Undo {sale}";
+        Console.WriteLine(log);
+        logMessages.Add(log);
+        
         // Fråga:
         // Vad betyder LIFO?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Last In First Out - får ut först den senaste som läggs in");
     }
 
     static void ReverseTextLab()
     {
         Console.WriteLine("=== Stack-labb: vänd text ===");
-        Console.WriteLine("TODO: Implementera ReverseTextLab.");
 
-        // TODO:
         // Läs in en text från användaren.
         // Skriv ut texten bakofram använd en lämplig collektion.
+
+        Stack<char> line =new Stack<char>(InputHelpers.ReadString("Skriv text: "));
+        while (line.TryPop(out char c))
+        {
+            Console.Write(c);
+        }
     }
 
     #endregion
@@ -442,15 +503,16 @@ internal class Program
     {
         Console.WriteLine("=== Logg ===");
 
-        // TODO:
         // Om logMessages är tom, skriv "Inga loggmeddelanden finns."
         // Annars: loopa igenom logMessages och skriv ut varje meddelande.
-
-        Console.WriteLine("TODO: Implementera PrintLog.");
-
+        foreach (var log in logMessages)
+        {
+            Console.WriteLine(log);
+        }
+        
         // Fråga:
         // Varför passar List bra för loggmeddelanden?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("List är de mest generiska och flexibela sättet att lagra och är bra på att söka sortera om det behövs");
     }
 
     static void ListLab()
@@ -478,26 +540,36 @@ internal class Program
 
         shoppingList.Remove("Smör");
         PrintListInfo(shoppingList, "Efter Remove");
-
-        // TODO:
+        
         // Lägg till minst 4 egna varor med en loop.
         // Skriv ut hela listan.
-
+        for (int i = 1; i <= 4; i++)
+        {
+            shoppingList.Add($"{25*i}cl Läsk");
+        }
+        PrintListInfo(shoppingList,"Efter läsk");
+        foreach (var item in shoppingList)
+        {
+            Console.WriteLine(item);
+        }
+        
         // Fråga 1:
         // Vad betyder Count?
-        Console.WriteLine("Svar 1: TODO - skriv ditt svar här");
+        Console.WriteLine("Hur många element är i listan");
 
         // Fråga 2:
         // Vad betyder Capacity?
-        Console.WriteLine("Svar 2: TODO - skriv ditt svar här");
+        Console.WriteLine("Hur mycket minnesplats som är reserverad för listan");
 
         // Fråga 3:
         // Varför ökar inte Capacity med exakt 1 varje gång?
-        Console.WriteLine("Svar 3: TODO - skriv ditt svar här");
+        Console.WriteLine("För att allokera mer minne är mer krävande än använda minne vi vet vi kan använda");
+        Console.WriteLine("Kabn använda EnsureCapacity för att manuellt säga hur stor vi vet att vi minst kommer ha.");
 
         // Fråga 4:
         // Minskar Capacity automatiskt när element tas bort?
-        Console.WriteLine("Svar 4: TODO - skriv ditt svar här");
+        Console.WriteLine("Nej, den antar att du troligtvis kommer ha listan så stor i framtiden eftersom de var det en gång");
+        Console.WriteLine("Om man vill ha mindre så använd TrimExcess för tvinga ner det");
     }
 
     static void PrintListInfo(List<string> list, string message)
@@ -519,26 +591,32 @@ internal class Program
 
         string[] weekdays = ["Måndag", "Tisdag", "Onsdag", "Torsdag", "Fredag"];
 
-        // TODO:
         // Skriv ut alla veckodagar med en for-loop.
         // Tips: använd weekdays.Length för att veta hur många element det finns.
-
-        // TODO:
+        for (int i = 0; i < weekdays.Length; i++)
+        {
+            Console.WriteLine(weekdays[i]);
+        }
         // Skriv ut alla veckodagar med foreach.
 
-        Console.WriteLine("TODO: Implementera utskrifter i ArrayLab.");
+        foreach (string weekday in weekdays)
+        {
+            Console.WriteLine(weekday);
+        }
 
+        string f =weekdays[5];
         // Fråga 1:
         // När passar en array bättre än en List?
-        Console.WriteLine("Svar 1: TODO - skriv ditt svar här");
+        Console.WriteLine("Är snabbare än en lista och ");
 
         // Fråga 2:
         // Vad händer om du försöker skriva weekdays[5]?
-        Console.WriteLine("Svar 2: TODO - skriv ditt svar här");
+        Console.WriteLine("Får en IndexOutOfRangeExeption " +
+                          "(Kunde varit värre, äldre programmingspråk tillåter det och kan skapa massa exploits som t.ex. kan hacka ens dator pga det)");
 
         // Fråga 3:
         // Varför måste arrayens storlek anges från början?
-        Console.WriteLine("Svar 3: TODO - skriv ditt svar här");
+        Console.WriteLine("Eftersom den reserverar allt minne på ett ställe från början och kan inte ändra storlek (Om du inte overridar med en större array)");
     }
 
     #endregion
@@ -556,7 +634,6 @@ internal class Program
         Console.WriteLine("Skriv en mening:");
         string text = ReadLine;
 
-        //ToDo: Skriv koden för CountWords
         Dictionary<string, int> wordCounts = CountWords(text);
 
         Console.WriteLine("Resultat:");
@@ -568,27 +645,34 @@ internal class Program
 
         // Fråga:
         // Varför passar Dictionary bra när vi ska räkna ord?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Eftersom vi vet om ett ord används mer än en gång och inte räknar det två gånger");
     }
 
     static Dictionary<string, int> CountWords(string text)
     {
         Dictionary<string, int> wordCounts = new Dictionary<string, int>();
 
-        // TODO:
         // Dela upp text i ord med string.Split.
         // Separera på: mellanslag (ett eller flera), punkt, !, ?, :, ;
-        // Tips: string[] words = text.Split(new char[] { ' ', '.', '!', '?', ':', ';' },
-        //                                   StringSplitOptions.RemoveEmptyEntries);
-        //
+        string[] words = text.Split(new char[] { ' ', '.', '!', '?', ':', ';' },
+                                           StringSplitOptions.RemoveEmptyEntries);
+        
         // Loopa igenom orden.
         // Gör varje ord till gemener med .ToLower() så att "Hej" och "hej" räknas som samma.
         // Om ordet redan finns i wordCounts → öka värdet med 1.
         // Annars → lägg till ordet med värdet 1.
+        foreach (string word in words)
+        {
+            string w = word.ToLower();
+            if (wordCounts.ContainsKey(w))
+                wordCounts[w]++;
+            else
+                wordCounts.Add(w,1);
+        }
 
         // Fråga:
         // Vad är nyckeln och vad är värdet i wordCounts?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Nyckeln är ordet och värdet är hur många gång ordet har används");
 
         return wordCounts;
     }
@@ -630,20 +714,32 @@ internal class Program
 
     static bool CheckParentheses(string text)
     {
-        // TODO:
         // Använd en Stack<char> och en Dictionary<char, char>.
         //
         // Tips Dictionary:
         // Låt dictionaryn mappa varje stängande parentes till sin matchande öppnare.
         // Det gör matchningskontrollen till en enkel uppslagning istället för flera if-satser.
-        //
+        Dictionary<char, char> parenthesesPair = new Dictionary<char, char>();
+        parenthesesPair.Add('{','}');
+        parenthesesPair.Add('[',']');
+        parenthesesPair.Add('<','>');
+        parenthesesPair.Add('(',')');
+            
         // Tips Stack:
         // Stacken håller reda på vilka öppnare du sett men ännu inte stängt.
         // Tänk på vad LIFO innebär här — varför är det precis rätt egenskap för det här problemet?
-        //
+        Stack<char> parenthesesStack = new Stack<char>();
+        foreach (char c in parenthesesStack)
+        {
+            if (parenthesesStack.Count != 0 &&parenthesesStack.Peek() == c)
+                parenthesesStack.Pop();
+            else if (parenthesesPair.TryGetValue(c, out char pair))
+                parenthesesStack.Append(pair);
+        }
+        
         // Fråga:
         // Varför är Dictionary + Stack bättre än bara Stack med if/else för matchningen?
-        Console.WriteLine("Svar: TODO - skriv ditt svar här");
+        Console.WriteLine("Kan lägga till och ta bort beroende på vad som görs lättare och behöver inte göra massa if/switch för att kolla varje bracket");
 
         return false;
     }
@@ -699,31 +795,31 @@ internal class Program
 
         // Fråga 1:
         // Varför ändras inte number1 när number2 ändras?
-        Console.WriteLine("Svar 1: TODO - skriv ditt svar här");
+        Console.WriteLine("int är en value typ så när man sätter = så säger man att 10 = 10 men det ändras inte");
 
         // Fråga 2:
         // Varför ändras inte score1.Points när score2.Points ändras?
-        Console.WriteLine("Svar 2: TODO - skriv ditt svar här");
+        Console.WriteLine("ScoreValue är en struct vilket är en value type. ");
 
         // Fråga 3:
         // Varför ändras product1.Stock när product2.Stock ändras?
-        Console.WriteLine("Svar 3: TODO - skriv ditt svar här");
+        Console.WriteLine("Stock är en referenstyp så när du satte product2 så pekar den bara på samma referens");
 
         // Fråga 4:
         // Är Product en value type eller reference type?
-        Console.WriteLine("Svar 4: TODO - skriv ditt svar här");
+        Console.WriteLine("Det är en class så det är en referens typ");
 
         // Fråga 5:
         // Vad ligger på heapen i Product-exemplet?
-        Console.WriteLine("Svar 5: TODO - skriv ditt svar här");
+        Console.WriteLine("Alla variabler. Code, Name,Price och Stock. Det enda som storas i stack är referensen");
 
         // Fråga 6:
         // Vad innebär det att två variabler kan peka på samma objekt?
-        Console.WriteLine("Svar 6: TODO - skriv ditt svar här");
+        Console.WriteLine("Betyder att om du kan nå samma värden från två olika variabler.");
 
         // Fråga 7:
         // Vad är skillnaden mellan stacken i minnet och Stack<T> som datastruktur?
-        Console.WriteLine("Svar 7: TODO - skriv ditt svar här");
+        Console.WriteLine("Både använder LIFO. Stack i minnet är vad datorn ser men Stack<T> är en struktur för att lätt använda LIFO så den ligger i heap istället");
     }
 
     #endregion
