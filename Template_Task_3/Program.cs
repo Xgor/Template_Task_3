@@ -1075,16 +1075,20 @@ internal class Program
 
     static void SaveLogToFile()
     {
-        // TODO:
         // Kontrollera om logMessages är tom — skriv meddelande om den är det.
         // Annars: spara alla loggmeddelanden till en fil som heter "logg.txt".
         // Skriv ut hur många rader som sparades och var filen finns.
         //
-        // Tips:
-        // File.WriteAllLines("logg.txt", logMessages);
-        // Console.WriteLine($"Sparade {logMessages.Count} rader till logg.txt");
 
-        Console.WriteLine("TODO: Implementera SaveLogToFile.");
+        if (logMessages.Count > 0)
+        {
+            Console.WriteLine("logMessages is empty, file will not be saved");
+            return;
+        }
+        
+        File.WriteAllLines("logg.txt", logMessages);
+        Console.WriteLine($"Sparade {logMessages.Count} rader till logg.txt");
+
     }
 
     #endregion
