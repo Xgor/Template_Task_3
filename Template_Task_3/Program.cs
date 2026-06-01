@@ -852,16 +852,15 @@ internal class Program
         Console.WriteLine();
         Console.WriteLine($"RecursiveOdd({n}) = {RecursiveOdd(n)}");
 
-        // TODO:
         // När du har implementerat metoderna nedan kan du avkommentera raderna.
 
-        // Console.WriteLine($"RecursiveEven({n}) = {RecursiveEven(n)}");
-        // Console.WriteLine($"IterativeEven({n}) = {IterativeEven(n)}");
-        // Console.WriteLine($"FactorialRecursive({n}) = {FactorialRecursive(n)}");
-        // Console.WriteLine($"SumRecursive({n}) = {SumRecursive(n)}");
-        // Console.WriteLine($"SumIterative({n}) = {SumIterative(n)}");
-        // Console.WriteLine($"FibonacciRecursive({n}) = {FibonacciRecursive(n)}");
-        // Console.WriteLine($"FibonacciIterative({n}) = {FibonacciIterative(n)}");
+        Console.WriteLine($"RecursiveEven({n}) = {RecursiveEven(n)}");
+        Console.WriteLine($"IterativeEven({n}) = {IterativeEven(n)}");
+        Console.WriteLine($"FactorialRecursive({n}) = {FactorialRecursive(n)}");
+        Console.WriteLine($"SumRecursive({n}) = {SumRecursive(n)}");
+        Console.WriteLine($"SumIterative({n}) = {SumIterative(n)}");
+        Console.WriteLine($"FibonacciRecursive({n}) = {FibonacciRecursive(n)}");
+        Console.WriteLine($"FibonacciIterative({n}) = {FibonacciIterative(n)}");
 
         Console.WriteLine();
         Console.WriteLine("Trace av rekursion:");
@@ -873,19 +872,19 @@ internal class Program
 
         // Fråga 1:
         // Vad är ett basfall?
-        Console.WriteLine("Svar 1: TODO - skriv ditt svar här");
+        Console.WriteLine("Fall när vi väldigt lätt vet vad det borde vara eller ver att det inte kan forsätta så vi returnerar.");
 
         // Fråga 2:
         // Varför måste en rekursiv metod ha ett basfall?
-        Console.WriteLine("Svar 2: TODO - skriv ditt svar här");
+        Console.WriteLine("Det agerar som ett stop så det kan ta slut");
 
         // Fråga 3:
         // Vad händer på stacken när en metod anropar sig själv?
-        Console.WriteLine("Svar 3: TODO - skriv ditt svar här");
+        Console.WriteLine("Den lägger in varje metod i stack och sen poppar alla när den nått en basfall");
 
         // Fråga 4:
         // Vilken version är mest minnesvänlig: rekursion eller iteration? Varför?
-        Console.WriteLine("Svar 4: TODO - skriv ditt svar här");
+        Console.WriteLine("Interation, Datorn behöver inte spara alla gånger den kallar sig själv och backa tillbaka massa gånger");
     }
 
     static int RecursiveOdd(int n)
@@ -905,7 +904,6 @@ internal class Program
 
     static int RecursiveEven(int n)
     {
-        // TODO:
         // Om n <= 0, kasta ArgumentException med meddelandet "n måste vara större än 0."
         // Om n == 1, returnera 2.
         // Annars returnera RecursiveEven(n - 1) + 2.
@@ -914,7 +912,18 @@ internal class Program
         // RecursiveEven(1) = 2
         // RecursiveEven(2) = 4
         // RecursiveEven(3) = 6
+        if (n <= 0)
+        {
+            throw new ArgumentException("n måste vara större än 0.");
+        }
 
+        if (n == 1)
+        {
+            return 2;
+        }
+
+        return RecursiveEven(n - 1) + 2;       
+        
         return 0;
     }
 
@@ -928,13 +937,21 @@ internal class Program
         // IterativeEven(1) = 2
         // IterativeEven(2) = 4
         // IterativeEven(3) = 6
+        if (n <= 0)
+        {
+            throw new ArgumentException("n måste vara större än 0.");
+        }
 
-        return 0;
+        int value = 0;
+        for (int i = 0; i < n; i++)
+        {
+            value += 2;
+        }
+        return value;
     }
 
     static int FactorialRecursive(int n)
     {
-        // TODO:
         // Fakultet:
         // 5! = 5 * 4 * 3 * 2 * 1 = 120
         //
@@ -942,32 +959,44 @@ internal class Program
         // Om n == 0 eller n == 1, returnera 1.
         // Annars returnera n * FactorialRecursive(n - 1).
 
-        return 0;
+        if (n < 0)
+            throw new ArgumentException("n måste vara större än 0");
+        if (n == 0 || n == 1)
+            return 1;
+        
+        return FactorialRecursive(n-1)*n;
     }
 
     static int SumRecursive(int n)
     {
-        // TODO:
         // Summera alla tal från 1 till n med rekursion.
         //
         // SumRecursive(5)
         // = 5 + 4 + 3 + 2 + 1
         // = 15
-
-        return 0;
+        if (n < 0)
+            throw new ArgumentException("n måste vara större än 0");
+        if (n == 0) return 0;
+        // could add n==1 to add an extra cycle but this works fine 
+        return SumRecursive(n-1)+n;
     }
 
     static int SumIterative(int n)
     {
-        // TODO:
         // Summera alla tal från 1 till n med en loop.
+        if (n < 0)
+            throw new ArgumentException("n måste vara större än 0");
 
-        return 0;
+        int sum = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            sum += i;
+        }
+        return sum;
     }
 
     static int FibonacciRecursive(int n)
     {
-        // TODO:
         // Fibonacci:
         // 0, 1, 1, 2, 3, 5, 8, 13 ...
         //
@@ -975,16 +1004,31 @@ internal class Program
         // Om n == 0, returnera 0.
         // Om n == 1, returnera 1.
         // Annars returnera FibonacciRecursive(n - 1) + FibonacciRecursive(n - 2).
-
-        return 0;
+        if (n < 0)
+            throw new ArgumentException("n måste vara större än 0");
+        
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        
+        return FibonacciRecursive(n-1) + FibonacciRecursive(n-2);
     }
 
     static int FibonacciIterative(int n)
     {
-        // TODO:
         // Implementera Fibonacci med loop.
         // Denna version ska vara mer minnesvänlig än den rekursiva.
-
+        if (n < 0)
+            throw new ArgumentException("n måste vara större än 0");
+        
+        if (n == 0) return 0;
+        if (n == 1) return 1;
+        int lastSum = 0;
+        int sum = 1;
+        for (int i = 1; i < n; i++)
+        {
+            sum += lastSum;
+            lastSum = sum;
+        }
         return 0;
     }
 
@@ -1011,13 +1055,18 @@ internal class Program
 
         Console.WriteLine($"{indentation}RecursiveOddWithDepth({n})");
 
-        // TODO:
         // Lägg till basfall: om n == 1, skriv ut med indrag att basfallet nåtts och returnera 1.
         // Annars: anropa RecursiveOddWithDepth(n - 1, depth + 1) rekursivt.
         // Spara resultatet, skriv ut med indrag vad metoden returnerar, och returnera resultatet.
         // Jämför utskriften med RecursiveOddWithTrace — vad tillför indraget?
 
-        return 0;
+        if (n == 1)
+        {
+            Console.WriteLine("Base found. returning 1");
+            return 1;
+        }
+        
+        return RecursiveOddWithDepth(n-1,depth+1);
     }
 
     // ============================================================
